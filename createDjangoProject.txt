@@ -185,3 +185,20 @@ touch procfile
 web: gunicorn website.wsgi --log-file
 # add database stuff here - our project doesn't need it
 web: python manage.py migrage && gunicorn website.wsg
+
+# setup python version for website
+touch runtime.txt
+#add python version to runtime.txt file
+python 3.14.0
+
+# to see what is installed in project
+pip freeze
+
+# let railway know what it needs requirements.txt file
+pip freeze > requirements.txt
+
+# push changes to github
+git add .
+git commit -am 'added production changes'
+git push
+
