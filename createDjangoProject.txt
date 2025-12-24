@@ -1,0 +1,187 @@
+create a dhango project
+   24  pwd
+   25  mkdir /c/django-resume
+   26  cd /c/django-resume/
+   27  ls -la
+   28  ls
+   29  python -m venv virt
+   34  pip install django
+   35  pip freeze
+   36  pip uninstall django
+   37  pip install django==5.0.6
+   38  ls
+   39  deactivate
+   40  source virt/Scripts/activate
+   41  django-admin startproject resume
+   42  cd resume
+   43  ls
+   44  python manage.py startapp website
+   45  ls
+   46  python manage.py runserver
+
+# Setting.py and Urls.py
+# resume/settings.py
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'website'  #<-- add website
+]
+
+# resume/urls.py
+from django.urls import path, include #<-- add include
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('website.urls'))  #<-- add this
+]
+
+# create website/url.py file
+
+# website/url.py
+# add following to file
+from django.urls import path, include
+from . import views
+
+urlpatterns = [
+    path('', views.home, name='home'),
+    path('about', views.about, name='about'),
+]
+
+# Create url, template and view
+# url created above in urlpaterns = []
+
+# add views - website/views.py
+from django.shortcuts import render
+
+def home(request):
+	return render(request, 'home.html', {})
+
+def about(request):
+	return render(request, 'about.html', {})
+
+# cretate website/templates folder
+
+# create templates
+# - website/templates/home.html
+# - website/templates/about.html
+
+# example website/templates/about.html
+<a href="{% url 'home'%}">Home</a><br/>
+
+<h1>About Me... </h1>
+My name is Fun Climber!
+
+# Download a template - bootstrap resume template
+
+# create resume/static folder
+# copy assets, css, js folders into resume/static folder
+
+# update resume/resume/setting.py so that it knows about static directory
+STATIC_URL = 'static/'
+STATICFILES_DIRS = ['static/']  #<-- add this line
+
+# copy index.html to resume/website/templates folder and rename to home.html
+# update local href entries to point to correct location
+{% load static %}  #<-- add jhango tag to top to top of file
+<link rel="icon" type="image/x-icon" href="{% static 'assets/img/favicon.ico'%}" /> #<-- example
+<link href="{% static 'css/styles.css'%}" rel="stylesheet" />  #<-- updated reference example
+<span class="d-none d-lg-block"><img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="{% static 'assets/img/profile.jpg'%}" alt="..." /></span> #<-- example
+<script src="{% static 'js/scripts.js'%}"></script>  #<-- example
+
+# free link to add icons - like instagram image
+fontawesome - fab
+
+# color picker - type into google and brings up a color picker with associated codes
+
+
+# github account
+# railway - $5 a month
+# cloudflare - www.cloudflare.com
+# namecheap.com - domain name - $10 a year
+# ssh key 
+
+# create ssh key
+-- remove virt environment
+deactivate
+-- return to root folder
+cd ~
+mkdir .ssh
+cd .ssh
+ssh-keygen.exe
+ssh-keygen -t rsa
+ cat id_rsa.pub
+-- add to github as ssh key
+
+# return to project
+ cd /c/django-resume/
+   72  source virt/Scripts/activate
+   73  ls
+   74  cd resume
+   75  ls
+   76  python manage.py runserver
+
+#setup git
+git config --global user.name "amarsden44"
+git config --global user.email "am.mbox100@gmail.com"
+git config --global push.default matching
+git config --global alias.co checkout
+git init
+git add .
+git commit -am 'initial commit'
+
+# install following in /c/django-resume/resume
+# handles static files
+pip install whitenoise
+# serves the pages
+pip install gunicorn
+
+# update resume/setting.py
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'website',
+    'whitenoise.runserver_nostatic',  #<<< added me
+]
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  #<<< added me
+]
+
+
+STATIC_URL = 'static/'
+STATICFILES_DIRS = ['static/']
+
+# <<< added next 3 lines
+# push site online
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = BASE_DIR / 'staticfiles'  
+
+# now from terminal create static files
+python manage.py collectstatic
+
+# create a procfile
+touch procfile
+
+# add following to procfile
+  # get "website" name from website/apps.py file - 
+  # class WebsiteConfig(AppConfig):
+  #    default_auto_field = 'django.db.models.BigAutoField'
+  #    name = 'website' 
+
+web: gunicorn website.wsgi --log-file
+# add database stuff here - our project doesn't need it
+web: python manage.py migrage && gunicorn website.wsg
